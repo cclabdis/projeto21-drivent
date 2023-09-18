@@ -5,9 +5,11 @@ import { addressRepository, CreateAddressParams, enrollmentRepository, CreateEnr
 import { exclude } from '@/utils/prisma-utils';
 
 // TODO - Receber o CEP por parâmetro nesta função.
-async function getAddressFromCEP() {
+async function getAddressFromCEP(cep: number) {
   // FIXME: está com CEP fixo!
-  const result = await request.get(`${process.env.VIA_CEP_API}/37440000/json/`);
+
+  const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
+
 
   // TODO: Tratar regras de negócio e lanças eventuais erros
 
