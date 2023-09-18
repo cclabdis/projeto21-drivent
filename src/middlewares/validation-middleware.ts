@@ -27,3 +27,4 @@ function validate(schema: ObjectSchema, type: 'body' | 'params') {
 }
 
 type ValidationMiddleware = (req: Request, res: Response, next: NextFunction) => void;
+
