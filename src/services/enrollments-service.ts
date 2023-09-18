@@ -3,18 +3,19 @@ import { request } from '@/utils/request';
 import { invalidDataError } from '@/errors';
 import { addressRepository, CreateAddressParams, enrollmentRepository, CreateEnrollmentParams } from '@/repositories';
 import { exclude } from '@/utils/prisma-utils';
-import { cepError, ViaCepResponse } from '@/protocols';
+import { ViaCepResponse } from '@/protocols';
 
 async function getAddressFromCEP(cep: string) {
   const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
 
-  if (!result.data) {
-    throw invalidDataError('Formato de cep invalido');
-  }
-
-  const { erro } = result.data as cepError;
-  if (erro) {
-    throw invalidDataError('Cep nao encontrado');
+  if (!result.data || result.data.erro) {
+    switch (true) {
+      case !result.data:
+        throw invalidDataError('Formato de CEP inválido');
+      case result.data.erro:
+        throw invalidDataError('CEP não encontrado');
+      default:
+    }
   }
 
   const { logradouro, complemento, bairro, localidade, uf } = result.data as ViaCepResponse;
@@ -57,8 +58,8 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
   enrollment.birthday = new Date(enrollment.birthday);
   const address = getAddressForUpsert(params.address);
 
-  await getAddressFromCEP(address.cep);// TODO - Verificar se o CEP é válido antes de associar ao enrollment.
-
+  await getAddressFromCEP(address.cep);
+  
   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, 'userId'));
 
   await addressRepository.upsert(newEnrollment.id, address, address);

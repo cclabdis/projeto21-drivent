@@ -16,17 +16,6 @@ export type Cep = {
   cep: string;
 };
 
-export type cepFormat = {
-  logradouro: string;
-  complemento: string;
-  bairro: string;
-  cidade: string;
-  uf: string;
-};
-
-export type cepError = {
-  erro: boolean;
-};
 
 export type ViaCepResponse = {
   cep: string;
@@ -39,4 +28,8 @@ export type ViaCepResponse = {
   gia: string;
   ddd: string;
   siafi: string;
+};
+
+export type cepFormat = Omit<ViaCepResponse, 'cep' | 'localidade' | 'ibge' | 'gia' | 'ddd' | 'siafi'> & {
+  cidade: string;
 };
