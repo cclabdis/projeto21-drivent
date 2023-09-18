@@ -16,7 +16,7 @@ export type Cep = {
   cep: string;
 };
 
-export type ViaCepAPIFormat = {
+export type cepFormat = {
   logradouro: string;
   complemento: string;
   bairro: string;
@@ -24,11 +24,11 @@ export type ViaCepAPIFormat = {
   uf: string;
 };
 
-export type ViaCepAPIError = {
+export type cepError = {
   erro: boolean;
 };
 
-export type ViaCepAdressResponse = {
+export type ViaCepResponse = {
   cep: string;
   logradouro: string;
   complemento: string;

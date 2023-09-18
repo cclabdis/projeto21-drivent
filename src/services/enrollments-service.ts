@@ -1,31 +1,30 @@
 import { Address, Enrollment } from '@prisma/client';
 import { request } from '@/utils/request';
-import { notFoundError, invalidDataError } from '@/errors';
+import { invalidDataError } from '@/errors';
 import { addressRepository, CreateAddressParams, enrollmentRepository, CreateEnrollmentParams } from '@/repositories';
 import { exclude } from '@/utils/prisma-utils';
-import { ViaCepAPIError, ViaCepAdressResponse } from '@/protocols';
+import { cepError, ViaCepResponse } from '@/protocols';
 
 async function getAddressFromCEP(cep: string) {
-  // FIXME: está com CEP fixo!
-
   const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
-  // TODO: Tratar regras de negócio e lanças eventuais erros
+
   if (!result.data) {
     throw invalidDataError('Formato de cep invalido');
   }
-  const response = result.data as ViaCepAPIError;
-  if (response.erro) {
-    // return response;
+
+  const { erro } = result.data as cepError;
+  if (erro) {
     throw invalidDataError('Cep nao encontrado');
   }
-  // FIXME: não estamos interessados em todos os campos
-  const resultCEP = result.data as ViaCepAdressResponse;
+
+  const { logradouro, complemento, bairro, localidade, uf } = result.data as ViaCepResponse;
+
   return {
-    logradouro: resultCEP.logradouro,
-    complemento: resultCEP.complemento,
-    bairro: resultCEP.bairro,
-    cidade: resultCEP.localidade,
-    uf: resultCEP.uf,
+    logradouro,
+    complemento,
+    bairro,
+    cidade: localidade,
+    uf,
   };
 }
 
