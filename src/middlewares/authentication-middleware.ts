@@ -7,9 +7,6 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   const authHeader = req.header('Authorization');
   if (!authHeader) throw unauthorizedError();
 
-  // const {cep} = req.params
-  // const newCep = 
-
   const token = authHeader.split(' ')[1];
   if (!token) throw unauthorizedError();
 
@@ -23,7 +20,6 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
 }
 
 export type AuthenticatedRequest = Request & JWTPayload;
-
 
 type JWTPayload = {
   userId: number;
