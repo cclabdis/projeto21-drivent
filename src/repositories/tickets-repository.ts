@@ -20,14 +20,14 @@ async function getTicketById(id: number): Promise<Ticket> {
 
 async function createTicket(ticket: CreateTicket): Promise<TicketAndType> {
     const newTicket = await prisma.ticket.create({
-      data: ticket,
-      include: {
-        TicketType: true,
-      },
+        data: ticket,
+        include: {
+            TicketType: true,
+        },
     });
 
     return newTicket;
-  }
+}
 
 export const ticketsRepository = {
     createTicket,
