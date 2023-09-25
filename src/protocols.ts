@@ -50,6 +50,11 @@ export type PaymentRequest= {
 export type TicketFormat = {
   TicketType: TicketType
 };
+
+export type enrolamentoId = {
+  enrolamentoId: Number
+} 
+
 export type cepFormat = Omit<ViaCepResponse, 'cep' | 'localidade' | 'ibge' | 'gia' | 'ddd' | 'siafi'> & {
   cidade: string;
 };

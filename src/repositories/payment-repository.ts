@@ -9,7 +9,7 @@ async function findPayment(ticketId: number): Promise<Payment> {
     });
 }
 
-async function createPayment(cardIssuer: string, cardLastDigits: string, ticketId: number, value: number): Promise<Payment> {
+async function createPayment(cardIssuer: string, cardLastDigits: string, value: number, ticketId: number,): Promise<Payment> {
     return await prisma.payment.create({
       data: {
         cardIssuer,
