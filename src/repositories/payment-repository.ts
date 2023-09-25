@@ -9,6 +9,19 @@ async function findPayment(ticketId: number): Promise<Payment> {
     });
 }
 
+async function createPayment(cardIssuer: string, cardLastDigits: string, ticketId: number, value: number): Promise<Payment> {
+    return await prisma.payment.create({
+      data: {
+        cardIssuer,
+        cardLastDigits,
+        value,
+        ticketId,
+      },
+    });
+  }
+  
+
 export const paymentRepository = {
-    findPayment
+    findPayment,
+    createPayment
 };

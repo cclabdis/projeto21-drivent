@@ -29,6 +29,17 @@ async function createTicket(ticket: CreateTicket): Promise<TicketAndType> {
     return newTicket;
 }
 
+async function updateTicketStatus(ticketId: number, status: 'RESERVED' | 'PAID'): Promise<void> {
+    await prisma.ticket.update({
+      where: { 
+        id: ticketId 
+    },
+      data: { 
+        status
+    },
+    });
+  }
+
 async function getTicketByIdForPayment(ticketId: number) {
     const ticket = await prisma.ticket.findFirst({
       where: { id: ticketId },
@@ -40,9 +51,29 @@ async function getTicketByIdForPayment(ticketId: number) {
     return ticket;
   }
 
+  async function findTicketPriceByUserId(userId: number): Promise<number | null> {
+    const ticket = await prisma.ticket.findUnique({
+      where: { enrollmentId: userId },
+      select: {
+        TicketType: {
+          select: {
+            price: true,
+          },
+        },
+      },
+    });
+  
+    if (!ticket || !ticket.TicketType || typeof ticket.TicketType.price !== 'number') {
+      return null;
+    }
+  
+    return ticket.TicketType.price;
+  }
+
 export const ticketsRepository = {
     createTicket,
     findMany,
     getTicketById,
-    getTicketByIdForPayment
+    getTicketByIdForPayment,
+    findTicketPriceByUserId
 };

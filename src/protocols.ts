@@ -1,4 +1,4 @@
-import { Ticket, TicketType } from '@prisma/client';
+import { Ticket, TicketType, Payment } from '@prisma/client';
 
 export type ApplicationError = {
   name: string;
@@ -35,6 +35,17 @@ export type ViaCepResponse = {
   gia: string;
   ddd: string;
   siafi: string;
+};
+
+export type PaymentRequest= {
+  ticketId: number;
+  cardData: {
+    issuer: string;
+    number: number;
+    name: string;
+    expirationDate: Date;
+    cvv: number;
+  };
 };
 
 export type cepFormat = Omit<ViaCepResponse, 'cep' | 'localidade' | 'ibge' | 'gia' | 'ddd' | 'siafi'> & {
