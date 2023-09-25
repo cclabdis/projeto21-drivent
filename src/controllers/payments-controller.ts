@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from '@/middlewares';
 
 
 export async function getPayment(req: AuthenticatedRequest, res: Response): Promise<void> {
-  const ticketId  = Number(req.query.ticketId );
+  const ticketId  = Number(req.query.ticketId);
   const { userId }  = req;
 
   const payment = await paymentsService.getPayment(userId, ticketId);
