@@ -1,20 +1,16 @@
 import { Payment } from '@prisma/client';
-import { invalidDataError, notFoundError } from '@/errors';
+import { invalidDataError, notFoundError, unauthorizedError } from '@/errors';
+import { paymentRepository, ticketsRepository } from '@/repositories';
 
+async function getPayment(userId: number, ticketId: number): Promise<Payment> {
+    if (!ticketId) throw invalidDataError(`Ticket id invalido`);
 
+    const ticketType = await ticketsRepository.getTicketById(ticketId);
+    if (!ticketType) throw unauthorizedError();
 
+    if (ticketType.enrollmentId != userId) throw unauthorizedError();
 
-
-async function getPayment(ticketId: number): Promise<Payment> {
-    if (!ticketId) throw invalidDataError(`Ticket invalido`);
-
-    // const register = await enrollmentRepository.findWithAddressByUserId(userId);
-    // if (!register) throw notFoundError();
-
-    // const ticketType = await ticketsRepository.getTicketById(register.id);
-    // if (!ticketType) throw notFoundError();
-
-    return ;
+    return await paymentRepository.findPayment(ticketId);
 }
 
 // async function createProcess(ticketTypeId: number, userId: number): Promise<TicketAndType> {
@@ -33,7 +29,7 @@ async function getPayment(ticketId: number): Promise<Payment> {
 //     });
 // }
 
-export const ticketsService = {
+export const paymentsService = {
     // createProcess,
     getPayment
 };

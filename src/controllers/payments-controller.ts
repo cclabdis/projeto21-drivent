@@ -1,19 +1,20 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
-import { ticketsService } from '@/services';
+import { paymentsService} from '@/services';
 import { AuthenticatedRequest } from '@/middlewares';
-import { TicketId } from '@/protocols';
 
 
 export async function getPayment(req: AuthenticatedRequest, res: Response): Promise<void> {
-    const { ticketId } = req.body as TicketId
-  const payment = await 
+  const ticketId  = Number(req.query.ticketId );
+  const { userId }  = req;
+
+  const payment = await paymentsService.getPayment(userId, ticketId);
   res.status(httpStatus.OK).send(payment);
 }
 
 // export async function createProcess(req: AuthenticatedRequest, res: Response): Promise<void> {
  
 //   const { userId } = req;
-//   const process =  await
+//   const process =  await paymentsService.
 //   res.status(httpStatus.CREATED).send(process);
 // }
