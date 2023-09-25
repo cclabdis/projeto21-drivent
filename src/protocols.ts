@@ -16,6 +16,24 @@ export type Cep = {
   cep: string;
 };
 
+export type CreateTickets = {
+  id: number;
+  status: 'RESERVED' | 'PAID';
+  ticketTypeId: number;
+  enrollmentId: number;
+  TicketType: {
+    id: number;
+    name: string;
+    price: number;
+    isRemote: boolean;
+    includesHotel: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 
 export type ViaCepResponse = {
   cep: string;

@@ -8,6 +8,10 @@ async function getTicketsType(): Promise<TicketType[]> {
     return tickets;
 }
 
+
+// export type CreateTickets = CreateEnrollmentParams & {
+//     address: CreateAddressParams;
+//   };
 // export type GetFirstEventResult = Omit<Event, 'createdAt' | 'updatedAt'>;
 
 // async function isCurrentEventActive(): Promise<boolean> {
