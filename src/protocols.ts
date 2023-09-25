@@ -18,11 +18,11 @@ export type Cep = {
 };
 
 export type TicketTypeId = {
-  ticketTypeId: number
-}
+  ticketTypeId: number;
+};
 export type TicketId = {
-  ticketId: number
-}
+  ticketId: number;
+};
 
 export type ViaCepResponse = {
   cep: string;
@@ -37,7 +37,7 @@ export type ViaCepResponse = {
   siafi: string;
 };
 
-export type PaymentRequest= {
+export type PaymentRequest = {
   ticketId: number;
   cardData: {
     issuer: string;
@@ -48,12 +48,13 @@ export type PaymentRequest= {
   };
 };
 export type TicketFormat = {
-  TicketType: TicketType
+  TicketId: number;
+  TicketType: TicketType;
 };
 
 export type enrolamentoId = {
-  enrolamentoId: Number
-} 
+  enrolamentoId: number;
+};
 
 export type cepFormat = Omit<ViaCepResponse, 'cep' | 'localidade' | 'ibge' | 'gia' | 'ddd' | 'siafi'> & {
   cidade: string;

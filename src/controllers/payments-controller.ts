@@ -1,12 +1,11 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
-import { paymentsService} from '@/services';
+import { paymentsService } from '@/services';
 import { AuthenticatedRequest } from '@/middlewares';
 import { PaymentRequest } from '@/protocols';
 
-
 export async function getPayment(req: AuthenticatedRequest, res: Response): Promise<void> {
-  const ticketId  = Number(req.query.ticketId);
+  const ticketId = Number(req.query.ticketId);
   const { userId } = req.body;
 
   const payment = await paymentsService.getPayment(userId, ticketId);
@@ -14,9 +13,9 @@ export async function getPayment(req: AuthenticatedRequest, res: Response): Prom
 }
 
 export async function createProcess(req: AuthenticatedRequest, res: Response): Promise<void> {
-  const payment: PaymentRequest = req.body
+  const payment: PaymentRequest = req.body;
   const { userId } = req.body;
 
-  const process =  await paymentsService.postPayment(userId, payment)
+  const process = await paymentsService.postPayment(userId, payment);
   res.status(httpStatus.OK).send(process);
 }

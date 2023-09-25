@@ -9,14 +9,13 @@ async function getAddressFromCEP(cep: string) {
   const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
 
   if (!result.data) {
-    throw invalidDataError('Formato de CEP inválido')
+    throw invalidDataError('Formato de CEP inválido');
   }
-  
-  const { erro } = result.data
+
+  const { erro } = result.data;
   if (erro) {
     throw invalidDataError('CEP não encontrado');
   }
-
 
   const { logradouro, complemento, bairro, localidade, uf } = result.data as ViaCepResponse;
 

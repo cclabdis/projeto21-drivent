@@ -16,9 +16,8 @@ export async function getTicket(req: AuthenticatedRequest, res: Response): Promi
 }
 
 export async function create(req: AuthenticatedRequest, res: Response): Promise<void> {
-  const { ticketTypeId } = req.body as TicketTypeId
+  const { ticketTypeId } = req.body as TicketTypeId;
   const { userId } = req;
   const ticketAndType = await ticketsService.create(ticketTypeId, userId);
   res.status(httpStatus.CREATED).send(ticketAndType);
 }
-
