@@ -1,6 +1,7 @@
-import { Ticket, TicketType } from '@prisma/client';
-import { notFoundError } from '@/errors';
+import { Ticket, TicketStatus, TicketType } from '@prisma/client';
+import { invalidDataError, notFoundError } from '@/errors';
 import { enrollmentRepository, ticketsRepository } from '@/repositories';
+import { CreateTicket, TicketAndType } from '@/protocols';
 
 async function getTicketsType(): Promise<TicketType[]> {
     const tickets = await ticketsRepository.findMany();
@@ -13,36 +14,31 @@ async function getTickets(userId: number): Promise<Ticket> {
     if (!register) throw notFoundError();
 
     const ticketType = await ticketsRepository.getTicketById(register.id);
-    // if (!ticketType) throw notFoundError();
+    if (!ticketType) throw notFoundError();
 
     return ticketType;
 }
 
 
-//   export type CreateTicket = Omit<Ticket, 'id' | 'status' | 'createdAt' | 'updatedAt'>;
-// export type CreateTickets = CreateEnrollmentParams & {
-//     address: CreateAddressParams;
-//   };
-// export type GetFirstEventResult = Omit<Event, 'createdAt' | 'updatedAt'>;
-
-// async function isCurrentEventActive(): Promise<boolean> {
-//   const event = await eventRepository.findFirst();
-//   if (!event) return false;
-
-//   const now = dayjs();
-//   const eventStartsAt = dayjs(event.startsAt);
-//   const eventEndsAt = dayjs(event.endsAt);
-
-//   return now.isAfter(eventStartsAt) && now.isBefore(eventEndsAt);
-// }
-
-// export const eventsService = {
-//   getFirstEvent,
-//   isCurrentEventActive,
-// };
-
+async function create(ticketTypeId: number, userId: number): Promise<TicketAndType> {
+    if (!ticketTypeId) throw invalidDataError(`Ticket invalido`);
+  
+    const register = await enrollmentRepository.findWithAddressByUserId(userId);
+    if (!register) throw notFoundError();
+  
+    const ticketType = await ticketsRepository.getTicketById(register.id);
+    if (ticketType) throw notFoundError();
+  
+    return await ticketsRepository.createTicket({
+        ticketTypeId,
+        enrollmentId: register.id,
+        status: TicketStatus.RESERVED,
+      });
+      
+  }
 
 export const ticketsService = {
+    create,
     getTicketsType,
     getTickets
 };
