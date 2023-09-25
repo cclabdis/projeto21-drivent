@@ -21,3 +21,4 @@ export async function create(req: AuthenticatedRequest, res: Response): Promise<
   const ticketAndType = await ticketsService.create(ticketTypeId, userId);
   res.status(httpStatus.CREATED).send(ticketAndType);
 }
+

@@ -1,38 +1,26 @@
 import { Payment } from '@prisma/client';
 import { invalidDataError, notFoundError, unauthorizedError } from '@/errors';
-import { paymentRepository, ticketsRepository } from '@/repositories';
+import { enrollmentRepository, paymentRepository, ticketsRepository } from '@/repositories';
 
 async function getPayment(userId: number, ticketId: number): Promise<Payment> {
-    if (!ticketId ) throw invalidDataError(`Ticket id invalido`);
+    if (!ticketId ) throw invalidDataError(`bad request`);
+    // if( ticketId === null || isNaN(ticketId) ) throw notFoundError();
 
-    const ticketType = await ticketsRepository.getTicketById(ticketId);
-    if (!ticketType) throw notFoundError();
+    const ticketType = await ticketsRepository.getTicketByIdForPayment(ticketId);
+    if (!ticketType) throw notFoundError() //linha 68 do test
+   
 
-    if (ticketType.enrollmentId !== userId) throw unauthorizedError();
+    const register = await enrollmentRepository.findWithAddressByUserId(userId);
+   
+    if (ticketType.enrollmentId !== register.id) throw unauthorizedError();
 
     const payment = await paymentRepository.findPayment(ticketId);
-    if(!payment) throw unauthorizedError();
+    if(!payment) throw unauthorizedError()
     return payment;
 }
 
 
-// async function getPayment(userId: number, ticketId: number): Promise<Payment> {
-//     if (!ticketId || ticketId === null || isNaN(ticketId)) throw invalidDataError(`Ticket id invalido`);
 
-//     const ticketType = await ticketsRepository.getTicketById(ticketId);
-//     if (!ticketType) throw notFoundError();
-
-//     const register = await enrollmentRepository.findWithAddressByUserId(userId);
-//     if (!register) throw notFoundError();
-
-
-
-//     if (ticketType.enrollmentId !== register.id) throw unauthorizedError();
-
-//     const payment = await paymentRepository.findPayment(ticketId);
-//     if(!payment) throw unauthorizedError();
-//     return payment;
-// }
 
 
 // async function createProcess(ticketTypeId: number, userId: number): Promise<TicketAndType> {
