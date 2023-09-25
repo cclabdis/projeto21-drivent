@@ -16,7 +16,7 @@ async function createPayment(cardIssuer: string, cardLastDigits: string, ticketI
         cardLastDigits,
         value,
         ticketId,
-      },
+      }
     });
   }
   

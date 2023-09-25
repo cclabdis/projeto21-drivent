@@ -17,5 +17,5 @@ export async function createProcess(req: AuthenticatedRequest, res: Response): P
   const payment: PaymentRequest =req.body
   const { userId } = req;
   const process =  await paymentsService.postPayment(userId, payment)
-  res.status(httpStatus.CREATED).send(process);
+  res.status(httpStatus.OK).send(process);
 }

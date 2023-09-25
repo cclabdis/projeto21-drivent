@@ -1,6 +1,6 @@
-import { Ticket, TicketType } from '@prisma/client';
+import { Ticket,  TicketType } from '@prisma/client';
 import { prisma } from '@/config';
-import { CreateTicket, TicketAndType } from '@/protocols';
+import { CreateTicket, TicketAndType, TicketFormat } from '@/protocols';
 
 
 async function findMany(): Promise<TicketType[]> {
@@ -51,29 +51,78 @@ async function getTicketByIdForPayment(ticketId: number) {
     return ticket;
   }
 
-  async function findTicketPriceByUserId(userId: number): Promise<number | null> {
-    const ticket = await prisma.ticket.findUnique({
-      where: { enrollmentId: userId },
+  // async function findTicketPriceByUserId(userId: number): Promise<number | null> {
+  //   const ticket = await prisma.ticket.findUnique({
+  //     where: { enrollmentId: userId },
+  //     select: {
+  //       TicketType: {
+  //         select: {
+  //           price: true,
+  //         },
+  //       },
+  //     },
+  //   });
+  
+  //   if (!ticket || !ticket.TicketType || typeof ticket.TicketType.price !== 'number') {
+  //     return null;
+  //   }
+  
+  //   return ticket.TicketType.price;
+  // }
+  async function findTicketPriceByUserId(userId: number): Promise<TicketFormat[]> | null {
+    const tickets = await prisma.ticket.findMany({
       select: {
+        id: true,
+        status: true,
+        ticketTypeId: true,
+        enrollmentId: true,
+        createdAt: true,
+        updatedAt: true,
         TicketType: {
           select: {
+            id: true,
+            name: true,
             price: true,
+            isRemote: true,
+            includesHotel: true,
+            createdAt: true,
+            updatedAt: true,
           },
+        },
+      },
+      where: {
+        Enrollment: {
+          userId,
         },
       },
     });
   
-    if (!ticket || !ticket.TicketType || typeof ticket.TicketType.price !== 'number') {
+    if (!tickets || tickets.length == 0) {
       return null;
     }
   
-    return ticket.TicketType.price;
+    return tickets.map((ticket) => ({
+      // id: ticket.id,
+      // status: ticket.status,
+      // ticketTypeId: ticket.ticketTypeId,
+      // enrollmentId: ticket.enrollmentId,
+      TicketType: {
+        id: ticket.TicketType.id,
+        name: ticket.TicketType.name,
+        price: ticket.TicketType.price,
+        isRemote: ticket.TicketType.isRemote,
+        includesHotel: ticket.TicketType.includesHotel,
+        createdAt: ticket.TicketType.createdAt,
+        updatedAt: ticket.TicketType.updatedAt,
+      }
+    }));
   }
-
+  
 export const ticketsRepository = {
     createTicket,
     findMany,
     getTicketById,
     getTicketByIdForPayment,
-    findTicketPriceByUserId
+    findTicketPriceByUserId,
+    updateTicketStatus
 };

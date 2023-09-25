@@ -22,19 +22,25 @@ async function postPayment(userId: number, payment: PaymentRequest): Promise<Pay
 
     const ticketType = await ticketsRepository.getTicketByIdForPayment(payment.ticketId);
     if (!ticketType) throw notFoundError()
+
     if (ticketType.id !== userId) throw unauthorizedError();
 
     const register = await ticketsRepository.findTicketPriceByUserId(userId);
-    
 
+    // const cardIssuer = 
+    // const cardLastDigits = 
+    // const value = register
+    // const { ticketId } = payment
 
-    const cardIssuer = payment.cardData.issuer
-    const cardLastDigits = payment.cardData.number.toString().slice(-4)
-    const value = register
-    const ticketId = payment.ticketId
-   
+    const authorizedPayment = await paymentRepository.createPayment(
+        payment.cardData.issuer,
+        payment.cardData.number.slice(-4),
+        register[0].TicketType.price,
+        ticketType.id
 
-    const authorizedPayment = await paymentRepository.createPayment(cardIssuer, cardLastDigits, value, ticketId)
+    )
+
+    await ticketsRepository.updateTicketStatus(payment.ticketId, 'PAID');
 
     return authorizedPayment;
 }

@@ -41,13 +41,15 @@ export type PaymentRequest= {
   ticketId: number;
   cardData: {
     issuer: string;
-    number: number;
+    number: string;
     name: string;
-    expirationDate: Date;
-    cvv: number;
+    expirationDate: string;
+    cvv: string;
   };
 };
-
+export type TicketFormat = {
+  TicketType: TicketType
+};
 export type cepFormat = Omit<ViaCepResponse, 'cep' | 'localidade' | 'ibge' | 'gia' | 'ddd' | 'siafi'> & {
   cidade: string;
 };
