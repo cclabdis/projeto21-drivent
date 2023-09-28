@@ -1,5 +1,4 @@
-import { Ticket, TicketType, Payment } from '@prisma/client';
-
+import { Payment, Ticket } from '@prisma/client';
 
 export type ApplicationError = {
   name: string;
@@ -14,30 +13,39 @@ export type RequestError = {
   message: string;
 };
 
-export type Cep = {
-  cep: string;
+export type ViaCEPAddressError = {
+  error: boolean;
 };
 
-export type TicketTypeId = {
-  ticketTypeId: number;
-};
-export type TicketId = {
-  ticketId: number;
-};
-
-export type ViaCepResponse = {
-  cep: string;
+export type AddressEnrollment = {
   logradouro: string;
   complemento: string;
   bairro: string;
-  localidade: string;
+  cidade: string;
   uf: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
 };
 
 export type CEP = {
   cep: string;
 };
+
+export type CreateTicketParams = Omit<Ticket, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type InputTicketBody = {
+  ticketTypeId: number;
+};
+
+export type CardPaymentParams = {
+  issuer: string;
+  number: string;
+  name: string;
+  expirationDate: string;
+  cvv: string;
+};
+
+export type InputPaymentBody = {
+  ticketId: number;
+  cardData: CardPaymentParams;
+};
+
+export type PaymentParams = Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>;

@@ -81,8 +81,6 @@ model TicketType {
   Ticket        Ticket[]
 }
 
-
-
 model Ticket {
   id           Int          @id @default(autoincrement())
   ticketTypeId Int
