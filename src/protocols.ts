@@ -1,5 +1,7 @@
 import { Ticket, TicketType, Payment } from '@prisma/client';
 
+import { Payment, Ticket } from '@prisma/client';
+
 export type ApplicationError = {
   name: string;
   message: string;
@@ -37,29 +39,6 @@ export type ViaCepResponse = {
   siafi: string;
 };
 
-export type PaymentRequest = {
-  ticketId: number;
-  cardData: {
-    issuer: string;
-    number: string;
-    name: string;
-    expirationDate: string;
-    cvv: string;
-  };
+export type CEP = {
+  cep: string;
 };
-export type TicketFormat = {
-  TicketId: number;
-  TicketType: TicketType;
-};
-
-export type enrolamentoId = {
-  enrolamentoId: number;
-};
-
-export type cepFormat = Omit<ViaCepResponse, 'cep' | 'localidade' | 'ibge' | 'gia' | 'ddd' | 'siafi'> & {
-  cidade: string;
-};
-
-export type TicketAndType = Ticket & { TicketType: TicketType };
-
-export type CreateTicket = Omit<Ticket, 'id' | 'createdAt' | 'updatedAt'>;

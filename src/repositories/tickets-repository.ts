@@ -1,144 +1,56 @@
-import { Ticket, TicketType } from '@prisma/client';
+import { TicketStatus } from '@prisma/client';
 import { prisma } from '@/config';
-import { CreateTicket, TicketAndType, TicketFormat, enrolamentoId } from '@/protocols';
+import { CreateTicketParams } from '@/protocols';
 
-async function findMany(): Promise<TicketType[]> {
-  return prisma.ticketType.findMany();
+async function findTicketTypes() {
+  const result = await prisma.ticketType.findMany();
+  return result;
 }
 
-async function getTicketById(id: number): Promise<Ticket> {
-  const ticket = await prisma.ticket.findUnique({
-    where: { enrollmentId: id },
-    include: {
-      TicketType: true,
-    },
+async function findTicketByEnrollmentId(enrollmentId: number) {
+  const result = await prisma.ticket.findUnique({
+    where: { enrollmentId },
+    include: { TicketType: true },
   });
 
-  return ticket;
+  return result;
 }
 
-async function createTicket(ticket: CreateTicket): Promise<TicketAndType> {
-  const newTicket = await prisma.ticket.create({
+async function createTicket(ticket: CreateTicketParams) {
+  const result = await prisma.ticket.create({
     data: ticket,
-    include: {
-      TicketType: true,
-    },
+    include: { TicketType: true },
   });
 
-  return newTicket;
+  return result;
 }
 
-async function updateTicketStatus(ticketId: number, status: 'RESERVED' | 'PAID'): Promise<void> {
-  await prisma.ticket.update({
+async function findTicketById(ticketId: number) {
+  const result = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+    include: { TicketType: true },
+  });
+
+  return result;
+}
+
+async function ticketProcessPayment(ticketId: number) {
+  const result = prisma.ticket.update({
     where: {
       id: ticketId,
     },
     data: {
-      status,
-    },
-  });
-}
-
-async function getTicketByIdForPayment(ticketId: number) {
-  const ticket = await prisma.ticket.findFirst({
-    where: { id: ticketId },
-    include: {
-      TicketType: true,
-      Enrollment: true,
-    },
-  });
-  return ticket;
-}
-
-async function findTicketPriceByUserId(userId: number): Promise<TicketFormat[]> | null {
-  const tickets = await prisma.ticket.findMany({
-    select: {
-      id: true,
-      status: true,
-      ticketTypeId: true,
-      enrollmentId: true,
-      createdAt: true,
-      updatedAt: true,
-      TicketType: {
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          isRemote: true,
-          includesHotel: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-    },
-    where: {
-      Enrollment: {
-        userId,
-      },
+      status: TicketStatus.PAID,
     },
   });
 
-  if (!tickets || tickets.length == 0) {
-    return null;
-  }
-
-  return tickets.map((ticket) => ({
-    TicketId: ticket.enrollmentId,
-    TicketType: {
-      id: ticket.TicketType.id,
-      name: ticket.TicketType.name,
-      price: ticket.TicketType.price,
-      isRemote: ticket.TicketType.isRemote,
-      includesHotel: ticket.TicketType.includesHotel,
-      createdAt: ticket.TicketType.createdAt,
-      updatedAt: ticket.TicketType.updatedAt,
-    },
-  }));
-}
-
-async function findTicketEnrolamentoByUserId(userId: number): Promise<enrolamentoId[]> | null {
-  const tickets = await prisma.ticket.findMany({
-    select: {
-      id: true,
-      status: true,
-      ticketTypeId: true,
-      enrollmentId: true,
-      createdAt: true,
-      updatedAt: true,
-      TicketType: {
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          isRemote: true,
-          includesHotel: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-    },
-    where: {
-      Enrollment: {
-        userId,
-      },
-    },
-  });
-
-  if (!tickets || tickets.length == 0) {
-    return null;
-  }
-
-  return tickets.map((ticket) => ({
-    enrolamentoId: ticket.enrollmentId,
-  }));
+  return result;
 }
 
 export const ticketsRepository = {
+  findTicketTypes,
+  findTicketByEnrollmentId,
   createTicket,
-  findMany,
-  getTicketById,
-  getTicketByIdForPayment,
-  findTicketPriceByUserId,
-  updateTicketStatus,
-  findTicketEnrolamentoByUserId,
+  findTicketById,
+  ticketProcessPayment,
 };

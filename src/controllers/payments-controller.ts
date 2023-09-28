@@ -1,21 +1,21 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
-import { paymentsService } from '@/services';
 import { AuthenticatedRequest } from '@/middlewares';
-import { PaymentRequest } from '@/protocols';
+import { InputPaymentBody } from '@/protocols';
+import { paymentsService } from '@/services';
 
-export async function getPayment(req: AuthenticatedRequest, res: Response): Promise<void> {
+export async function getPaymentByTicketId(req: AuthenticatedRequest, res: Response) {
   const ticketId = Number(req.query.ticketId);
-  const { userId } = req.body;
+  const { userId } = req;
 
-  const payment = await paymentsService.getPayment(userId, ticketId);
-  res.status(httpStatus.OK).send(payment);
+  const payment = await paymentsService.getPaymentByTicketId(userId, ticketId);
+  return res.status(httpStatus.OK).send(payment);
 }
 
-export async function createProcess(req: AuthenticatedRequest, res: Response): Promise<void> {
-  const payment: PaymentRequest = req.body;
-  const { userId } = req.body;
+export async function paymentProcess(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
+  const { ticketId, cardData } = req.body as InputPaymentBody;
 
-  const process = await paymentsService.postPayment(userId, payment);
-  res.status(httpStatus.OK).send(process);
+  const payment = await paymentsService.paymentProcess(ticketId, userId, cardData);
+  res.status(httpStatus.OK).send(payment);
 }
