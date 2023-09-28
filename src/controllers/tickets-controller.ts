@@ -11,8 +11,8 @@ export async function getTicketsType(_req: Request, res: Response): Promise<void
 
 export async function getTicket(req: AuthenticatedRequest, res: Response): Promise<void> {
   const { userId } = req;
-  const tickets = await ticketsService.getTickets(userId);
-  res.status(httpStatus.OK).send(tickets);
+  const ticket = await ticketsService.getTickets(userId);
+  res.status(httpStatus.OK).send(ticket);
 }
 
 export async function create(req: AuthenticatedRequest, res: Response): Promise<void> {
