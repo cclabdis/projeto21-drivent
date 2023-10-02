@@ -1,16 +1,21 @@
-import { Payment } from '@prisma/client';
+import { Hotel } from '@prisma/client';
 import { prisma } from '@/config';
 
-async function findHotelById(ticketId: number) {
-    const result = await prisma.payment.findFirst({
-      where: { ticketId },
-    });
-    return result;
-  }
+async function findHotelById(hotelId: number): Promise<Hotel> {
+  const result = await prisma.hotel.findUnique({
+    where: { id: hotelId },
+    include: { Rooms: true}
+  });
+  return result;
+}
 
-  async function findHotel() {
-    const result = await prisma.payment.findFirst({
-    
-    });
-    return result;
-  }
+// async function findHotels(): Promise<Hotel> {
+//   return await prisma.hotel.findMany({
+
+//   });
+// }
+
+export const hotelRepository = {
+  // findHotels,
+  findHotelById
+}

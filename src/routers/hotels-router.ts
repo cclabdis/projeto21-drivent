@@ -1,10 +1,14 @@
 import { Router } from 'express';
-import { validateBody } from '@/middlewares';
+import { authenticateToken, validateBody } from '@/middlewares';
 
 
 const hotelsRouter = Router();
 
-hotelsRouter.get('/', );
-hotelsRouter.get('/:hotelId', );
+hotelsRouter
+    .all('/*', authenticateToken)
+    .get('/:hotelId',)   
+    .get('/',)
+
 
 export { hotelsRouter };
+
