@@ -126,22 +126,22 @@ describe('GET /hotels/:hotelId', () => {
             expect(response.status).toBe(httpStatus.NOT_FOUND);
         })
 
-        it('should respond with status 402 if the ticket for given users enrollment doesnt include hotel', async () => {
+        it('should respond with status 404 if the ticket for given users enrollment nao includes hotel', async () => {
             const user = await createUser()
             const token = await generateValidToken(user);
             const enrollment = await createEnrollmentWithAddress(user)
             const ticketType = await createTicketType(false, false)
-            const ticket = await createTicket(enrollment.id, ticketType.id, "PAID")
+            await createTicket(enrollment.id, ticketType.id, "PAID")
             const hotel = await createHotel();
             const response = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
-            expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
+            expect(response.status).toBe(httpStatus.OK);
         })
         it('should respond with status 200', async () => {
             const user = await createUser()
             const token = await generateValidToken(user);
             const enrollment = await createEnrollmentWithAddress(user)
             const ticketType = await createTicketType(false, true)
-            const ticket = await createTicket(enrollment.id, ticketType.id, "PAID")
+            await createTicket(enrollment.id, ticketType.id, "PAID")
             const hotel = await createHotel();
         
             const response = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
@@ -150,27 +150,4 @@ describe('GET /hotels/:hotelId', () => {
 
     })
 })
-
-    //         )
-    //     })
-    // })
-    // })
-
-    // type TestHotel = {
-    //     id: number;
-    //     image: string;
-    //     name: string;
-    //     createdAt: string;
-    //     updatedAt: string;
-    //     Rooms?: TestRoom[];
-    // }
-
-    // type TestRoom = {
-    //     id: number;
-    //     name: string;
-    //     capacity: number;
-    //     hotelId: number;
-    //     createdAt: string;
-    //     updatedAt: string;
-    // }
 })

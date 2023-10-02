@@ -1,7 +1,7 @@
 import faker from '@faker-js/faker';
 import { Booking, Hotel, Room } from '@prisma/client';
 import { prisma } from '@/config';
-import { string } from 'joi';
+import { func, string } from 'joi';
 
 export function createHotel(): Promise<Hotel> {
   return prisma.hotel.create({
@@ -46,4 +46,15 @@ export function createRoom( hotel: number): Promise<Room> {
       hotelId: hotel,
     }
   })
+}
+
+export async function createMyTicketType(remote: boolean, hotel: boolean){
+  return prisma.ticketType.create({
+    data: {
+      name: faker.name.findName(),
+      price: faker.datatype.number(),
+      isRemote: remote,
+      includesHotel: hotel,
+    },
+  });
 }
