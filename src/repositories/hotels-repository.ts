@@ -9,9 +9,15 @@ async function findHotels() {
 async function findHotelById(hotelId: number): Promise<Hotel> {
   const result = await prisma.hotel.findUnique({
     where: { id: hotelId },
-    include: {Rooms: true},
+    include: { Rooms: true },
   });
-  console.log(result)
+  return result;
+}
+
+async function findHotel(hotelId: number): Promise<Hotel> {
+  const result = await prisma.hotel.findUnique({
+    where: { id: hotelId }
+  });
   return result;
 }
 
