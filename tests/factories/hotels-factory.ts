@@ -47,14 +47,3 @@ export function createRoom( hotel: number): Promise<Room> {
     }
   })
 }
-
-export async function createMyTicketType(remote: boolean, hotel: boolean){
-  return prisma.ticketType.create({
-    data: {
-      name: faker.name.findName(),
-      price: faker.datatype.number(),
-      isRemote: remote,
-      includesHotel: hotel,
-    },
-  });
-}

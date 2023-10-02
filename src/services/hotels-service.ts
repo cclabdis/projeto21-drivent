@@ -12,6 +12,7 @@ async function findHotels(userId: number) {
   if (!hotels || hotels.length === 0) throw notFoundError();
   return hotels;
 }
+
 async function findHotelById(userId: number, hotelId: number) {
   const reserved = await enrollmentRepository.findEnrollmenteByIdUnique(userId)
   if (!reserved || !reserved.Ticket) throw notFoundError()
@@ -20,6 +21,7 @@ async function findHotelById(userId: number, hotelId: number) {
   if (!reserved.Ticket.TicketType.includesHotel) throw paymentRequiredError("nao tem hotel incluso")
   const hotel = await hotelRepository.findHotelById(hotelId)
   if (!hotel) throw notFoundError()
+  return hotel
 
 }
 
