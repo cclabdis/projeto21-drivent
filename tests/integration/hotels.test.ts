@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import supertest from 'supertest';
-import { createEnrollmentWithAddress, createEvent, createHotel, createTicketType, createUser } from '../factories';
+import { createBooking, createEnrollmentWithAddress, createEvent, createHotel, createRoom, createTicketType, createUser } from '../factories';
 import { cleanDb, generateValidToken } from '../helpers';
 import app, { init } from '@/app';
 import faker from '@faker-js/faker';
@@ -47,15 +47,17 @@ describe('GET /hotels', () => {
         expect(response.status).toEqual(httpStatus.NOT_FOUND);
       });
   
-    //   it('should respond with status 404 when given hotel doesnt exist', async () => {
-    //     const user = await createUser();
-    //     const token = await generateValidToken(user);
-    //     await createEnrollmentWithAddress(user);
+      it('should respond with status 404 when given hotel doesnt exist', async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const hotel = await createHotel()
+        const room = await createRoom(hotel.id)
+        const booking = await createBooking(user.id, room.id)
   
-    //     const response = await server.get('/payments?ticketId=1').set('Authorization', `Bearer ${token}`);
+        const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
   
-    //     expect(response.status).toEqual(httpStatus.NOT_FOUND);
-    //   });
+        expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      });
   
     //   it('should respond with status 401 when user doesnt own given ticket', async () => {
     //     const user = await createUser();
