@@ -7,10 +7,9 @@ export function invalidDataError(details: string): ApplicationError {
   };
 }
 
-
-export function paymentRequiredError(message: string = 'payment required'): ApplicationError {
+export function paymentRequiredError(message = 'payment required'): ApplicationError {
   return {
     name: 'PaymentRequired',
-    message
+    message,
   };
-};
+}
