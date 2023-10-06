@@ -6,10 +6,3 @@ export function invalidDataError(details: string): ApplicationError {
     message: `Invalid data: ${details}`,
   };
 }
-
-export function paymentRequiredError(message = 'payment required'): ApplicationError {
-  return {
-    name: 'PaymentRequired',
-    message,
-  };
-}

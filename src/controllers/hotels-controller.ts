@@ -1,19 +1,19 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
-import { invalidDataError } from '@/errors';
 import { AuthenticatedRequest } from '@/middlewares';
 import { hotelsService } from '@/services';
 
 export async function getHotels(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const hotels = await hotelsService.findHotels(userId);
-  return res.status(httpStatus.OK).send(hotels);
+
+  const hotels = await hotelsService.getHotels(userId);
+  res.status(httpStatus.OK).send(hotels);
 }
 
-export async function getHotelById(req: AuthenticatedRequest, res: Response) {
-  const hotelId = parseInt(req.params.hotelId) as number;
-  if (isNaN(Number(hotelId)) || !Number.isInteger(Number(hotelId))) throw invalidDataError('params hotelId');
+export async function getHotelsWithRooms(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const hotel = await hotelsService.findHotelById(userId, hotelId);
-  return res.status(httpStatus.OK).send(hotel);
+  const hotelId = Number(req.params.hotelId);
+
+  const hotelWithRooms = await hotelsService.getHotelsWithRooms(userId, hotelId);
+  res.status(httpStatus.OK).send(hotelWithRooms);
 }

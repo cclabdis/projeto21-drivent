@@ -1,30 +1,43 @@
-import { notFoundError, paymentRequiredError } from '@/errors';
-import { enrollmentRepository, hotelRepository } from '@/repositories';
+import { TicketStatus } from '@prisma/client';
+import { invalidDataError, notFoundError } from '@/errors';
+import { cannotListHotelsError } from '@/errors/cannot-list-hotels-error';
+import { enrollmentRepository, hotelRepository, ticketsRepository } from '@/repositories';
 
-async function findHotels(userId: number) {
-  const reserved = await enrollmentRepository.findEnrollmenteByIdUnique(userId);
-  if (!reserved || !reserved.Ticket) throw notFoundError();
-  if (reserved.Ticket.status !== 'PAID') throw paymentRequiredError('nao estao pagos');
-  if (reserved.Ticket.TicketType.isRemote) throw paymentRequiredError('é remoto');
-  if (!reserved.Ticket.TicketType.includesHotel) throw paymentRequiredError('nao tem hotel incluso');
+async function validateUserBooking(userId: number) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) throw notFoundError();
+
+  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
+  if (!ticket) throw notFoundError();
+
+  const type = ticket.TicketType;
+
+  if (ticket.status === TicketStatus.RESERVED || type.isRemote || !type.includesHotel) {
+    throw cannotListHotelsError();
+  }
+}
+
+async function getHotels(userId: number) {
+  await validateUserBooking(userId);
 
   const hotels = await hotelRepository.findHotels();
-  if (!hotels || hotels.length === 0) throw notFoundError();
+  if (hotels.length === 0) throw notFoundError();
+
   return hotels;
 }
 
-async function findHotelById(userId: number, hotelId: number) {
-  const reserved = await enrollmentRepository.findEnrollmenteByIdUnique(userId);
-  if (!reserved || !reserved.Ticket) throw notFoundError();
-  if (reserved.Ticket.status !== 'PAID') throw paymentRequiredError('nao estao pagos');
-  if (reserved.Ticket.TicketType.isRemote) throw paymentRequiredError('é remoto');
-  if (!reserved.Ticket.TicketType.includesHotel) throw paymentRequiredError('nao tem hotel incluso');
-  const hotel = await hotelRepository.findHotelById(hotelId);
-  if (!hotel) throw notFoundError();
-  return hotel;
+async function getHotelsWithRooms(userId: number, hotelId: number) {
+  await validateUserBooking(userId);
+
+  if (!hotelId || isNaN(hotelId)) throw invalidDataError('hotelId');
+
+  const hotelWithRooms = await hotelRepository.findRoomsByHotelId(hotelId);
+  if (!hotelWithRooms) throw notFoundError();
+
+  return hotelWithRooms;
 }
 
 export const hotelsService = {
-  findHotelById,
-  findHotels,
+  getHotels,
+  getHotelsWithRooms,
 };

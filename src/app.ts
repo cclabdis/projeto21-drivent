@@ -9,8 +9,8 @@ import {
   eventsRouter,
   enrollmentsRouter,
   ticketsRouter,
+  paymentsRouter,
   hotelsRouter,
-  paymentRouter,
 } from '@/routers';
 import { loadEnv, connectDb, disconnectDB } from '@/config';
 
@@ -26,7 +26,7 @@ app
   .use('/event', eventsRouter)
   .use('/enrollments', enrollmentsRouter)
   .use('/tickets', ticketsRouter)
-  .use('/payments', paymentRouter)
+  .use('/payments', paymentsRouter)
   .use('/hotels', hotelsRouter)
   .use(handleApplicationErrors);
 
