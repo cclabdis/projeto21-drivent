@@ -29,7 +29,7 @@ async function postBooking(userId: number, roomId: number) {
   
 
   const room = await bookingRepository.check(roomId)
-  if (!room) throw notFoundError();
+  if (!room) throw forbiddenError("O quarto nao existe")
   if (room.capacity <= room.Booking.length) throw forbiddenError("Hotel sem capacidade ou quartos livres")
 
   const { id } = await bookingRepository.createBooking(userId, roomId)

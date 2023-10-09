@@ -4,7 +4,7 @@ import { Booking } from '@prisma/client';
 async function findBooking(userId: number) {
   return prisma.booking.findFirst({
     where:{
-        id: userId
+        userId,
     },
     include: {
         Room: true
@@ -36,7 +36,7 @@ async function createBooking(userId: number, roomId: number) {
     },
     })
   }
-  
+
   async function bookingUpdate(bookingId: number, roomId: number) {
     const result = prisma.booking.update({
       where: { 
