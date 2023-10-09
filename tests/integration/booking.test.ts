@@ -1,6 +1,4 @@
-import { generateCPF, getStates } from '@brazilian-utils/brazilian-utils';
 import faker from '@faker-js/faker';
-import dayjs from 'dayjs';
 import httpStatus from 'http-status';
 import * as jwt from 'jsonwebtoken';
 import supertest from 'supertest';
