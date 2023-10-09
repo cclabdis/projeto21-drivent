@@ -21,9 +21,9 @@ export async function getBookingById(req: AuthenticatedRequest, res: Response) {
   export async function putBookingById(req: AuthenticatedRequest, res: Response) {
     const { userId } = req;
     const { roomId } = req.body;
-    const bookingId = parseInt(req.params.bookingId);
-    const booking = await bookingService.putBooking(userId, roomId, bookingId)
+    const bookingIdParams = parseInt(req.params.bookingId);
+    const bookingId = await bookingService.putBooking(userId, roomId, bookingIdParams)
 
-    res.status(httpStatus.OK).send({ booking });
+    res.status(httpStatus.OK).send({ bookingId });
   }
 
