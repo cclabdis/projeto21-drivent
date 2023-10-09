@@ -59,6 +59,31 @@ describe('GET /booking', () => {
             const hotel = await createHotel()
             const room = await createRoomWithHotelId(hotel.id)
             const booking = await createBooking(user.id, room.id)
+
+            const response = await server.get('/booking').set('Authorization', `Bearer ${token}`);
+
+            console.log(response.text)
+
+            expect(response.status).toBe(200);
+            expect(response.body).toMatchObject({
+                id: booking.id,
+                userId: user.id,
+                roomId: room.id, 
+                Room: expect.objectContaining({
+                    id: room.id,
+                    name: expect.any(String),
+                    capacity: room.capacity,
+                    hotelId: hotel.id,
+                  })
+            })
+        });
+
+        it('should respond with status 200 when there is a reservation for a certain user', async () => {
+            const user = await createUser()
+            const token = await generateValidToken(user);
+            const hotel = await createHotel()
+            const room = await createRoomWithHotelId(hotel.id)
+            const booking = await createBooking(user.id, room.id)
             console.log(booking)
 
        
@@ -78,9 +103,9 @@ describe('GET /booking', () => {
                     capacity: room.capacity,
                     hotelId: hotel.id,
                   })
-
             })
         });
+
 
     })
 })
